@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мой мессенджер</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js"></script>
-    <!-- Add Firebase products that you want to use -->
     <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js"></script>
 </head>
 <body>
@@ -25,7 +23,6 @@
         </div>
     </div>
     <script>
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAVgK-BhA4gTI6EQPCLA7-HXQwJtJGcV10",
             authDomain: "messenger-46c67.firebaseapp.com",
@@ -48,7 +45,7 @@
 
             if (!registeredEmail) {
                 alert('Сначала зарегистрируйтесь!');
-                window.location.href = 'login.html'; // Перенаправление на страницу регистрации
+                window.location.href = 'login.html';
             } else if (!userName) {
                 let firstName = prompt("Введите ваше имя:");
                 let lastName = prompt("Введите вашу фамилию:");
@@ -73,10 +70,11 @@
                 };
 
                 // Сохраняем сообщение в Firebase
-                database.ref('messages').push(message);
-
-                // Очистка поля ввода
-                messageInput.value = "";
+                database.ref('messages').push(message).then(() => {
+                    messageInput.value = "";
+                }).catch(error => {
+                    console.error("Ошибка записи в базу данных:", error);
+                });
             }
         }
 
