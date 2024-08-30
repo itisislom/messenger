@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мой мессенджер</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js"></script>
 </head>
 <body>
     <div class="messenger">
         <div class="header">
             <h2>Мой Мессенджер</h2>
+            <button onclick="logout()">Выход</button>
         </div>
         <div class="chat-window" id="chat-window">
             <!-- Сообщения будут добавляться сюда -->
@@ -19,6 +24,76 @@
             <button onclick="sendMessage()">Отправить</button>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVgK-BhA4gTI6EQPCLA7-HXQwJtJGcV10",
+            authDomain: "messenger-46c67.firebaseapp.com",
+            projectId: "messenger-46c67",
+            storageBucket: "messenger-46c67.appspot.com",
+            messagingSenderId: "868985820439",
+            appId: "1:868985820439:web:b4aad64411e859d7df5352",
+            measurementId: "G-MX6BMLV088"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        let userName = '';
+
+        window.onload = function() {
+            const registeredEmail = localStorage.getItem('registeredEmail');
+            userName = localStorage.getItem('userName');
+
+            if (!registeredEmail) {
+                alert('Сначала зарегистрируйтесь!');
+                window.location.href = 'login.html'; // Перенаправление на страницу регистрации
+            } else if (!userName) {
+                let firstName = prompt("Введите ваше имя:");
+                let lastName = prompt("Введите вашу фамилию:");
+                userName = `${firstName} ${lastName}`;
+                localStorage.setItem('userName', userName);
+            }
+
+            // Загружаем существующие сообщения
+            database.ref('messages').on('child_added', function(snapshot) {
+                const message = snapshot.val();
+                displayMessage(message.userName, message.text);
+            });
+        };
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+
+            if (messageInput.value.trim() !== "") {
+                const message = {
+                    userName: userName,
+                    text: messageInput.value
+                };
+
+                // Сохраняем сообщение в Firebase
+                database.ref('messages').push(message);
+
+                // Очистка поля ввода
+                messageInput.value = "";
+            }
+        }
+
+        function displayMessage(userName, text) {
+            const chatWindow = document.getElementById('chat-window');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message';
+            messageElement.innerHTML = `<strong>${userName}:</strong> ${text}`;
+            chatWindow.appendChild(messageElement);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function logout() {
+            localStorage.removeItem('registeredEmail');
+            localStorage.removeItem('userName');
+            window.location.href = 'login.html';
+        }
+    </script>
 </body>
 </html>
