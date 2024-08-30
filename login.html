@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация / Вход</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Вход в мессенджер</h2>
+        <form id="login-form">
+            <input type="email" id="email" placeholder="Введите email" required>
+            <button type="submit">Войти</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            
+            // Проверяем, зарегистрирован ли уже пользователь
+            const registeredEmail = localStorage.getItem('registeredEmail');
+            
+            if (registeredEmail) {
+                if (registeredEmail === email) {
+                    alert('Добро пожаловать обратно!');
+                    window.location.href = 'index.html'; // Перенаправляем в мессенджер
+                } else {
+                    alert('Неверный email. Пожалуйста, попробуйте снова.');
+                }
+            } else {
+                // Сохраняем email и "регистрируем" пользователя
+                localStorage.setItem('registeredEmail', email);
+                alert('Регистрация успешна! Теперь вы можете использовать мессенджер.');
+                window.location.href = 'index.html'; // Перенаправляем в мессенджер
+            }
+        });
+    </script>
+</body>
+</html>
